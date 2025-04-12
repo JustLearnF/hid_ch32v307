@@ -143,5 +143,6 @@ void DMA1_Channel6_IRQHandler(void) {
 
 void EXTI4_IRQHandler(void) {
   memset((void*)&current_state, 0, RXBS);
+  current_state.device = 2;
   EXTI_ClearITPendingBit(EXTI_Line4);
 }

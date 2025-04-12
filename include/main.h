@@ -26,10 +26,10 @@ struct k_report
 struct m_report
 {
   uint8_t buttons;
-  uint8_t x;
-  uint8_t y;
-  uint8_t vertical;
-  uint8_t horizon;
+  int8_t x;
+  int8_t y;
+  int8_t vertical;
+  int8_t horizon;
 };
 
 

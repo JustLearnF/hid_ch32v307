@@ -52,6 +52,8 @@ void usb_task(void) {
             current_state.mreport.vertical, current_state.mreport.horizon);
         delay_counter = current_state.delay;
         if (current_state.mmode == 0) mtriggered = true;
+      } else if (current_state.mmode == 0 && mtriggered == true) {
+        tud_hid_n_mouse_report(ITF_NUM_MOUSE, report_id, 0, 0, 0, 0, 0);
       }
     }
   }

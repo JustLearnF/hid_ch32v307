@@ -36,11 +36,11 @@ struct m_report
 struct input_state
 {
   uint8_t device;   // 选择的设备 0:键盘 1:鼠标 2:BOTH
-  uint8_t kmode;   // 键盘选择的模式 0:单次 1:持久
-  uint8_t mmode;   // 鼠标选择的模式 0:单次 1:持久
+  uint8_t kmode;   // 键盘选择的模式 0:单次 1:持久 2:循环
+  uint8_t mmode;   // 鼠标选择的模式 0:单次 1:持久 2:循环
   struct k_report kreport;   // 键盘hid报文
   struct m_report mreport;   // 鼠标hid报文
-  uint8_t delay;   // 单次模式为延时,持久模式为间隔，单位为10ms
+  uint8_t delay;   // 单次模式为延时,循环模式为间隔，单位为10ms
 };
 
 extern struct input_state current_state;

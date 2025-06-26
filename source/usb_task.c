@@ -34,9 +34,8 @@ void usb_task(void) {
         tud_hid_n_keyboard_report(ITF_NUM_KEYBOARD, report_id,
                                   current_state.kreport.modifier,
                                   current_state.kreport.keycode);
-        delay_counter = current_state.delay;
         if (current_state.kmode == 0) ktriggered = true;
-      } else {
+      } else if (ktriggered || current_state.kmode == 2) {
         tud_hid_n_keyboard_report(ITF_NUM_KEYBOARD, report_id, 0, NULL);
       }
     }
@@ -50,12 +49,12 @@ void usb_task(void) {
             ITF_NUM_MOUSE, report_id, current_state.mreport.buttons,
             current_state.mreport.x, current_state.mreport.y,
             current_state.mreport.vertical, current_state.mreport.horizon);
-        delay_counter = current_state.delay;
         if (current_state.mmode == 0) mtriggered = true;
-      } else if (current_state.mmode == 0 && mtriggered == true) {
+      } else if (mtriggered || current_state.mmode == 2) {
         tud_hid_n_mouse_report(ITF_NUM_MOUSE, report_id, 0, 0, 0, 0, 0);
       }
     }
+    delay_counter = current_state.delay;
   }
 }
 void tud_mount_cb(void) { blink_interval_ms = BLINK_MOUNTED; }

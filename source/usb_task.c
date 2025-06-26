@@ -36,7 +36,7 @@ void usb_task(void) {
                                   current_state.kreport.modifier,
                                   current_state.kreport.keycode);
         if (current_state.kmode != 1) ktriggered = true;
-      } else {
+      } else if(ktriggered){
         tud_hid_n_keyboard_report(ITF_NUM_KEYBOARD, report_id, 0, NULL);
       }
     }
@@ -52,7 +52,7 @@ void usb_task(void) {
             current_state.mreport.x, current_state.mreport.y,
             current_state.mreport.vertical, current_state.mreport.horizon);
         if (current_state.mmode != 1) mtriggered = true;
-      } else {
+      } else if(mtriggered){
         tud_hid_n_mouse_report(ITF_NUM_MOUSE, report_id, 0, 0, 0, 0, 0);
       }
     }

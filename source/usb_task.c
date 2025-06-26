@@ -19,7 +19,7 @@ void usb_task(void) {
 
   if (counter - start_counter < interval_10ms) return;  // not enough time
   start_counter += interval_10ms;
-  delay_counter = delay_counter == 0 ? 0 : delay_counter - interval_10ms;
+  delay_counter = (delay_counter == 0) ? 0 : delay_counter - interval_10ms;
 
   if (tud_suspended()) {
     // Wake up host if we are in suspend mode
@@ -29,13 +29,14 @@ void usb_task(void) {
     // keyboard interface
     if (tud_hid_n_ready(ITF_NUM_KEYBOARD)) {
       uint8_t const report_id = 0;
-      if ((current_state.device == 0 || current_state.device == 2) &&
-          !ktriggered && delay_counter == 0) {
+      if (((current_state.device == 0 || current_state.device == 2) &&
+           !ktriggered && delay_counter == 0) ||
+          (current_state.kmode == 2 && delay_counter == 0)) {
         tud_hid_n_keyboard_report(ITF_NUM_KEYBOARD, report_id,
                                   current_state.kreport.modifier,
                                   current_state.kreport.keycode);
-        if (current_state.kmode == 0) ktriggered = true;
-      } else if (ktriggered || current_state.kmode == 2) {
+        if (current_state.kmode != 1) ktriggered = true;
+      } else {
         tud_hid_n_keyboard_report(ITF_NUM_KEYBOARD, report_id, 0, NULL);
       }
     }
@@ -43,19 +44,21 @@ void usb_task(void) {
     // mouse interface
     if (tud_hid_n_ready(ITF_NUM_MOUSE)) {
       uint8_t const report_id = 0;
-      if ((current_state.device == 1 || current_state.device == 2) &&
-          !mtriggered && delay_counter == 0) {
+      if (((current_state.device == 1 || current_state.device == 2) &&
+           !mtriggered && delay_counter == 0) ||
+          ((current_state.mmode == 2 && delay_counter == 0))) {
         tud_hid_n_mouse_report(
             ITF_NUM_MOUSE, report_id, current_state.mreport.buttons,
             current_state.mreport.x, current_state.mreport.y,
             current_state.mreport.vertical, current_state.mreport.horizon);
-        if (current_state.mmode == 0) mtriggered = true;
-      } else if (mtriggered || current_state.mmode == 2) {
+        if (current_state.mmode != 1) mtriggered = true;
+      } else {
         tud_hid_n_mouse_report(ITF_NUM_MOUSE, report_id, 0, 0, 0, 0, 0);
       }
     }
-    delay_counter = current_state.delay;
   }
+  if (current_state.delay != 0 && delay_counter == 0)
+    delay_counter = current_state.delay;
 }
 void tud_mount_cb(void) { blink_interval_ms = BLINK_MOUNTED; }
 
